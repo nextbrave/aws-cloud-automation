@@ -3,7 +3,7 @@ resource "aws_security_group" "aws-cloud-automation-sg" {
     name = "aws-cloud-automation-sg"
     description = "Allow ssh traffic"
 
-    vpc_id = "vpc-c77b93a1"
+    vpc_id = "vpc-b5b640c8"
 
     ingress {
         from_port = 22
@@ -22,7 +22,7 @@ resource "aws_security_group" "aws-cloud-automation-sg" {
 
 resource "aws_instance" "aws-cloud-automation-ec2" {
 
-    ami = "ami-054a31f1b3bf90920"
+    ami = "ami-09e67e426f25ce0d7"
     instance_type = "t2.micro"
 
     key_name = "ec2_duocode"
