@@ -1,4 +1,5 @@
-resource = "aws_security_group" "aws-cloud-automation-sg" {
+resource "aws_security_group" "aws-cloud-automation-sg" {
+
     name = "aws-cloud-automation-sg"
     description = "Allow ssh traffic"
 
