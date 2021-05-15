@@ -186,5 +186,5 @@ We go to Settings --> General, look for Apply Method and change it to Auto Apply
     git push
     ```
 3. Check Terraform Cloud and AWS console for the object created:
-    ![s3bucketObject1](pic/s3bucketObject.png)
-    ![s3bucketObject1](pic/s3bucketObject1.png)
+    ![s3bucketObject1](pic/ec2Creation.png)
+    ![s3bucketObject1](pic/ec2Creation1.png)
