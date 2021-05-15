@@ -19,6 +19,11 @@ Terraform Cloud is an application that manages Terraform runs in a consistent an
 ## Create Workspace
 Once your Terraform Cloud account is ready and your created or joined a new organization, you can start managing version-controlled infrastructure.
 
+Requisites: 
+
+* Have already a github account and a repository to be used for the example later in this guide.
+    ![githubRepo](pic/githubRepository.png)
+
 1. Choose your workflow
     Choose the workflow to use, we choose Version Control Workflow (it will store our configuration in the repository and will trigger runs on pull requests and merges similar to jenkins pipelines)
     ![Workspace](pic/createWorkspace.png)
@@ -55,3 +60,79 @@ We configure the notifications whenever a build is started, we set up slack for 
 2. Configure the **ACCESS_KEY_ID** and **SECRETE_ACCESS_KEY** in terraform cloud.
     * Go to Variables and add new **Environment Variables**, mark them as sensitive not to be shown in the UI.
     ![AccessKeys](pic/variablesAWSSecrets.png)
+
+# Create an AWS S3 bucket
+## Clone the repository
+1. Lets clone the repository we connected with Terraform Cloud.
+    ```
+    git clone <repository_url>
+    e.g.
+    git clone https://github.com/nextbrave/aws-cloud-automation.git 
+    ```
+2. Let's initialize the terraform project running the below command
+    ```
+    terraform init
+    ```
+3. For this example we will create an s3 bucket, for that we need two files **_aws_provider.tf_** and **_aws_s3.tf_** with the following content:
+    ```
+    #aws_provider.tf
+    provider "aws" {
+        region  = "us-east-1"
+    }
+
+    #aws_s3.tf
+    resource "aws_s3_bucket" "aws-cloud-automation-s3" {
+        bucket = "aws-cloud-automation.nextbrave.com"
+        acl = "private"
+
+        tags = {
+            Owner = "terraform-aws-cloud-automation"
+            Project = "aws-cloud-automation"
+        }
+    }
+    ```
+    ![terraformFiles](pic/terraformFilesS3Bucket.png)
+    
+4. Let's now commit the changes to the remote repository so we see the runs in terraform cloud.
+    ```
+    git add --all
+    git commit -m "Creating AWS S3 bucket" 
+    git push
+    ```
+5. Let's go the Terraform Cloud UI
+    ![terraformCloudUI](pic/terraformCloudUI.png)
+    ![terraformCloudUILogs](pic/terraformCloudUILogs.png)
+6. For now let's just confirm and apply it and check AWS console if the S3 bucket was created.
+    ![confirmNApply](pic/confirmNApply.png)
+    ![awsS3](pic/awsS3.png)
+7. Before we continue since in our last example we hd to confirm and apply manually, let's configure Terraform Cloud to do it automatically.
+We go to Settings --> General, look for Apply Method and change it to Auto Apply and finally save Seetings:
+    ![confirmNApply](pic/applyAutomatically.png)
+    ![awsS3](pic/applyAutomatically1.png)
+
+## Let's now create one object inside the s3 bucket we created in the step before
+1. Create a new terraform file **_aws_s3_bucket_object.tf_** which will create a text file in the bucket and will make it public, we use the previous bucket we created.
+    ```
+    resource "aws_s3_bucket_object" "aws-cloud-automation-bucket-object" {
+        bucket = aws_s3_bucket.aws-cloud-automation-s3.bucket
+        key = "helloWorld.txt"
+        source = "helloWorld.txt"
+
+        acl = "public-read"
+
+        tags = {
+            Owner = "terraform-aws-cloud-automation"
+            Project = "aws-cloud-automation"
+        }
+    }
+    ```
+    Also let's create a text file with some string inside "**_helloWorld.txt_**"
+2. Next we push the changes to the repository to trigger a new run:
+    ```
+    git add --all
+    git commit -m "Adding a text file to the S3 bucket already created" 
+    git push
+    ```
+3. Check Terraform Cloud and AWS console for the object created:
+    ![confirmNApply](pic/applyAutomatically.png)
+    ![awsS3](pic/applyAutomatically1.png)
