@@ -134,5 +134,57 @@ We go to Settings --> General, look for Apply Method and change it to Auto Apply
     git push
     ```
 3. Check Terraform Cloud and AWS console for the object created:
-    ![confirmNApply](pic/applyAutomatically.png)
-    ![awsS3](pic/applyAutomatically1.png)
+    ![s3bucketObject1](pic/s3bucketObject.png)
+    ![s3bucketObject1](pic/s3bucketObject1.png)
+
+## Create an AWS EC2 instance and allow this server to be accessed via SSH
+1. Create a new terraform file **_aws_ec2.tf_** with the following content:
+    ```
+        resource = "aws_security_group" "aws-cloud-automation-sg" {
+            name = "aws-cloud-automation-sg"
+            description = "Allow ssh traffic"
+
+            vpc_id = "vpc-c77b93a1"
+
+            ingress {
+                from_port = 22
+                protocol = "tcp" 
+                to_port = 22
+                cidr_blocks = ["0.0.0.0/0"]
+            }
+
+            egress {
+                from_port = 0
+                protocol = "-1" 
+                to_port = 0
+                cidr_blocks = ["0.0.0.0/0"]
+            }
+        }
+
+        resource = "aws-instance" "aws-cloud-automation-ec2" {
+            ami = "ami-054a31f1b3bf90920"
+            instance_type = "t2.micro"
+
+            key_name = "ec2_duocode"
+
+            vpc_security_group_ids = [aws_security_group.aws-cloud-automation-sg.id]
+
+
+            tags = {
+                Name = "aws-cloud-automation-ec2"
+                Owner = "terraform-aws-cloud-automation"
+                Project = "aws-cloud-automation"
+            }
+        }
+    ```
+    > **_NOTE:_**This example creates an ec2 instance and also creates a security group to allow traffic into this instance via SSH protocol.
+
+2. Next we push the changes to the repository to trigger a new run:
+    ```
+    git add --all
+    git commit -m "Creating EC2 instance and allowing traffic on port 22" 
+    git push
+    ```
+3. Check Terraform Cloud and AWS console for the object created:
+    ![s3bucketObject1](pic/s3bucketObject.png)
+    ![s3bucketObject1](pic/s3bucketObject1.png)
