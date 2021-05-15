@@ -20,7 +20,8 @@ resource "aws_security_group" "aws-cloud-automation-sg" {
     }
 }
 
-resource = "aws-instance" "aws-cloud-automation-ec2" {
+resource "aws_instance" "aws-cloud-automation-ec2" {
+
     ami = "ami-054a31f1b3bf90920"
     instance_type = "t2.micro"
 
