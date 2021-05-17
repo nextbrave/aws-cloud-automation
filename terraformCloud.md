@@ -33,6 +33,7 @@ Requisites:
     ![VCS](pic/connectVCS.png)
     > **_NOTE:_** After that we login to the VCS to authorize this request from Terraform Cloud.
     ![Authorize GitHub](pic/hashicorpPermGithub.png)
+    ![GithubRepository](pic/githubSelectRepo.png)
 3. Choose a repository
 ![Repository](pic/chooseRepository.png)
 4. Configure settings
